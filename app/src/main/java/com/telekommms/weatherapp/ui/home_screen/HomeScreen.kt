@@ -12,12 +12,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.telekommms.library.weathersdk.models.data.DataValuesDaily
+import com.telekommms.library.weathersdk.models.data.TimelineItem
 import com.telekommms.weatherapp.MainActivity
+import com.telekommms.weatherapp.ui.Navigator
 import com.telekommms.weatherapp.ui.theme.primaryColor
 
 @Composable
 fun HomeScreen(
-    activity: MainActivity
+    navigator: Navigator,
+    cityName: String,
+    daily: List<TimelineItem<DataValuesDaily>>,
+    onSetDayItem: (dayItem: Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -32,18 +38,14 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             LocationLabel()
-            LocationCard()
+            LocationCard(cityName = cityName)
         }
-        Spacer(modifier = Modifier.height(15.dp))
-        DayCard(dayTitle = "Today", activity = activity, date = "18.11.2024")
 
-        Spacer(modifier = Modifier.height(15.dp))
-        DayCard(dayTitle = "Tomorrow", activity = activity, date = "19.11.2024")
-
-        Spacer(modifier = Modifier.height(15.dp))
-        DayCard(dayTitle = "Wednesday", activity = activity, date = "20.11.2024")
-
-        Spacer(modifier = Modifier.height(15.dp))
-        DayCard(dayTitle = "Thursday", activity = activity, date = "21.11.2024")
+        daily.forEachIndexed { index, dailyItem ->
+            Spacer(modifier = Modifier.height(15.dp))
+            DayCard(navigator = navigator, dayTimelineItem = dailyItem, dayIndex = index,
+                onSetDayItem = { onSetDayItem(it) }
+            )
+        }
     }
 }

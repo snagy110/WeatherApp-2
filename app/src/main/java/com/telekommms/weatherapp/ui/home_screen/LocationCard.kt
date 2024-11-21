@@ -16,7 +16,9 @@ import com.telekommms.weatherapp.ui.theme.primaryColor
 import com.telekommms.weatherapp.ui.theme.secondaryColor
 
 @Composable
-fun LocationCard() {
+fun LocationCard(
+    cityName: String
+) {
     Card(
         modifier = Modifier
             .background(primaryColor)
@@ -32,7 +34,7 @@ fun LocationCard() {
             modifier = Modifier
                 .padding(start = 10.dp, top = 10.dp, bottom = 10.dp, end = 10.dp)
             ,
-            text = "Weather forecast",
+            text = cityName,
             fontSize = 16.sp
         )
     }

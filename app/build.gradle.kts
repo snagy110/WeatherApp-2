@@ -69,6 +69,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:2.3.11")
     implementation("io.ktor:ktor-client-logging:2.3.11")
     implementation("io.ktor:ktor-client-okhttp:2.3.11")
+    implementation(libs.androidx.navigation.runtime.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

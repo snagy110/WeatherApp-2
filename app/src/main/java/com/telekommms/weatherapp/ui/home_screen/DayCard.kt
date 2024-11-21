@@ -16,16 +16,24 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.telekommms.library.weathersdk.models.data.DataValuesDaily
+import com.telekommms.library.weathersdk.models.data.TimelineItem
 import com.telekommms.weatherapp.DetailsActivity
 import com.telekommms.weatherapp.MainActivity
+import com.telekommms.weatherapp.ui.Navigator
+import com.telekommms.weatherapp.ui.Screen
 import com.telekommms.weatherapp.ui.theme.secondaryColor
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DayCard(
-    dayTitle: String,
-    activity: MainActivity,
-    date: String
+    navigator: Navigator,
+    dayTimelineItem: TimelineItem<DataValuesDaily>,
+    dayIndex: Int,
+    selected: Boolean = false,
+    onSetDayItem: (dayItem: Int) -> Unit
 ) {
     val context = LocalContext.current
     Card(
@@ -37,20 +45,32 @@ fun DayCard(
         shape = RoundedCornerShape(20.dp),
         border = BorderStroke(width = 1.dp, color = Color.White),
         onClick = {
-            context.startActivity(Intent(activity, DetailsActivity::class.java))
+            onSetDayItem(dayIndex)
+            navigator.goTo(Screen.Details)
+//            context.startActivity(Intent(activity, DetailsActivity::class.java))
         }
     ) {
         Text(
             modifier = Modifier
                 .padding(start = 20.dp, top = 15.dp),
-            text = dayTitle,
+            text = when (dayIndex) {
+                0 -> {
+                    "Today"
+                }
+                1 -> {
+                    "Tomorrow"
+                }
+                else -> {
+                    dayTimelineItem.time.toLocalDateTime(TimeZone.UTC).dayOfWeek.toString()
+                }
+            },
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )
         Text(
             modifier = Modifier
                 .padding(start = 20.dp, bottom = 15.dp),
-            text = date,
+            text = dayTimelineItem.time.toLocalDateTime(TimeZone.UTC).date.toString().replace("-", "."),
             fontSize = 18.sp
         )
     }

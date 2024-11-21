@@ -19,7 +19,7 @@ class DetailsActivity  : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    DetailsScreen(this)
+//                    DetailsScreen("")
                 }
             }
         }

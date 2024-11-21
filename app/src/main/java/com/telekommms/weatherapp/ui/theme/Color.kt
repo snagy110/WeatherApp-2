@@ -12,5 +12,7 @@ val Pink40 = Color(0xFF7D5260)
 
 val primaryColor = Color(0xFF201D24)
 val secondaryColor = Color(0xFF38353A)
-val selectedColor = Color(0xFF3C4652)
+val selectedColor = Color(0xFF2C586F)
 val brightPurple = Color(0xFFD2C4FA)
+val darkPurple = Color(0xFF59488D)
+val disabledTextColor = Color(0xFF6D6A6F)
