@@ -44,22 +44,22 @@ fun DetailsScreen(
     navigator: Navigator,
     minutely: List<TimelineItem<DataValuesMinutely>>
 ) {
-    val dayMinutely = mutableListOf<TimelineItem<DataValuesMinutely>>()
-    val minutelyNow = mutableListOf<TimelineItem<DataValuesMinutely>>()
-    minutely.forEach {
-        if (it.time.toString().substring(0..9) == dayTimelineItem.time.toString()
-                .substring(0..9)
-        ) {
-            dayMinutely.add(it)
-        }
-    }
-    dayMinutely.forEach {
-        val one = it.time.toString().substring(0..15)
-        val two = Clock.System.now().toJavaInstant().toString().substring(0..15)
-        if (it.time.toString().substring(0..15) == "2024-11-21T10:22") {
-            minutelyNow.add(it)
-        }
-    }
+//    val dayMinutely = mutableListOf<TimelineItem<DataValuesMinutely>>()
+//    val minutelyNow = mutableListOf<TimelineItem<DataValuesMinutely>>()
+//    minutely.forEach {
+//        if (it.time.toString().substring(0..9) == dayTimelineItem.time.toString()
+//                .substring(0..9)
+//        ) {
+//            dayMinutely.add(it)
+//        }
+//    }
+//    dayMinutely.forEach {
+//        val one = it.time.toString().substring(0..15)
+//        val two = Clock.System.now().toJavaInstant().toString().substring(0..15)
+//        if (it.time.toString().substring(0..15) == "2024-11-21T10:22") {
+//            minutelyNow.add(it)
+//        }
+//    }
     Column(
         modifier = Modifier
             .background(primaryColor)
@@ -171,10 +171,14 @@ fun DetailsScreen(
             averageHumidity = dayTimelineItem.values.humidityAvg.toInt().toString(),
             humidity = dayTimelineItem.values.humidityAvg.toFloat(),
             rainProbability = dayTimelineItem.values.precipitationProbabilityAvg.toInt().toString(),
-            uv = minutelyNow[0].values.uvIndex.toString(),
-            wind = minutelyNow[0].values.windSpeed.toInt().toString(),
-            visibility = minutelyNow[0].values.visibility.toInt().toString(),
-            pressure = minutelyNow[0].values.pressureSurfaceLevel.toInt().toString(),
+//            uv = minutelyNow[0].values.uvIndex.toString(),
+//            wind = minutelyNow[0].values.windSpeed.toInt().toString(),
+//            visibility = minutelyNow[0].values.visibility.toInt().toString(),
+//            pressure = minutelyNow[0].values.pressureSurfaceLevel.toInt().toString(),
+            uv = minutely[0].values.uvIndex.toString(),
+            wind = minutely[0].values.windSpeed.toInt().toString(),
+            visibility = minutely[0].values.visibility.toInt().toString(),
+            pressure = minutely[0].values.pressureSurfaceLevel.toInt().toString(),
             sunrise = "${dayTimelineItem.values.sunriseTime?.toLocalDateTime(TimeZone.UTC)?.hour}:${
                 dayTimelineItem.values.sunriseTime?.toLocalDateTime(
                     TimeZone.UTC

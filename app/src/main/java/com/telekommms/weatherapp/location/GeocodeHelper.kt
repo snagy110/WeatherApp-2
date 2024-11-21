@@ -19,6 +19,10 @@ object GeocodeHelper {
             longitude,
             1
         )
-        return addresses?.get(0)?.locality
+        var locality = ""
+        if (addresses?.isNotEmpty() == true) {
+            locality = addresses?.get(0)?.locality.toString()
+        }
+        return locality
     }
 }

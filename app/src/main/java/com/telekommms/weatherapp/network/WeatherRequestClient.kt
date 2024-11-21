@@ -15,11 +15,16 @@ class WeatherRequestClient {
     suspend fun requestWeatherForecast(
         latitude: Double,
         longitude: Double
-    ): Response<WeatherForecast> {
+    ): WeatherForecast {
         val response: HttpResponse =
             client.get("https://api.tomorrow.io/v4/weather/forecast?location=$latitude,$longitude&apikey=X4Ctxmi35fC8EL5EZe3L7rAETOIuXhCn")
         val inputAsString = response.content.toInputStream().bufferedReader().use { it.readText() }
-        val obj = Json.decodeFromString<WeatherForecast>(inputAsString)
-        return Response.Success(obj)
+        val obj = Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+            explicitNulls = false
+            encodeDefaults = true
+        }.decodeFromString<WeatherForecast>(inputAsString)
+        return obj
     }
 }

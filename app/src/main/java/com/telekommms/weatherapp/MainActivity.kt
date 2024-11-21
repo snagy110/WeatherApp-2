@@ -12,14 +12,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.telekommms.library.weathersdk.models.Response
+import com.telekommms.library.weathersdk.models.data.DataValuesDaily
 import com.telekommms.library.weathersdk.models.data.DataValuesMinutely
+import com.telekommms.library.weathersdk.models.data.Location
 import com.telekommms.library.weathersdk.models.data.TimelineItem
 import com.telekommms.library.weathersdk.models.data.WeatherForecast
+import com.telekommms.library.weathersdk.models.data.WeatherForecastTimelines
 import com.telekommms.weatherapp.location.GeocodeHelper.getLocalityFromCoordinates
+import com.telekommms.weatherapp.network.WeatherRequestClient
 import com.telekommms.weatherapp.ui.Navigator
 import com.telekommms.weatherapp.ui.Screen
 import com.telekommms.weatherapp.ui.details_screen.DetailsScreen
@@ -28,14 +34,16 @@ import com.telekommms.weatherapp.ui.home_screen.HomeScreen
 import com.telekommms.weatherapp.ui.permission_screen.PermissionScreen
 import com.telekommms.weatherapp.ui.theme.WeatherAppTheme
 import com.telekommms.weatherapp.ui.welcome_screen.WelcomeScreen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.toJavaInstant
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
-
 
 class MainActivity : ComponentActivity(), DeviceLocationTracker.DeviceLocationListener {
     private val screenFlow = MutableStateFlow<Screen>(Screen.Welcome)
@@ -48,31 +56,11 @@ class MainActivity : ComponentActivity(), DeviceLocationTracker.DeviceLocationLi
     private val lon = MutableStateFlow(0.0)
     private val city = MutableStateFlow("")
     private val minutelyForecast = MutableStateFlow<List<TimelineItem<DataValuesMinutely>>>(listOf())
+    private val dailyForecast = MutableStateFlow<List<TimelineItem<DataValuesDaily>>>(listOf())
     private lateinit var deviceLocationTracker: DeviceLocationTracker
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-//        val hasLocationPermission = (ActivityCompat.checkSelfPermission(
-//            this,
-//            Manifest.permission.ACCESS_FINE_LOCATION
-//        )
-//                == PackageManager.PERMISSION_GRANTED &&
-//                ActivityCompat.checkSelfPermission(
-//                    this,
-//                    Manifest.permission.ACCESS_COARSE_LOCATION
-//                )
-//                == PackageManager.PERMISSION_GRANTED)
-//
-//        if (!hasLocationPermission) {
-//            ActivityCompat.requestPermissions(
-//                this,
-//                arrayOf(
-//                    Manifest.permission.ACCESS_FINE_LOCATION,
-//                    Manifest.permission.ACCESS_COARSE_LOCATION
-//                ), 1
-//            )
-//        }
-
         deviceLocationTracker = DeviceLocationTracker(
             context = this,
             deviceLocationListener = this
@@ -84,12 +72,19 @@ class MainActivity : ComponentActivity(), DeviceLocationTracker.DeviceLocationLi
         val weatherForecast = Json {
             ignoreUnknownKeys = true
         }.decodeFromString<WeatherForecast>(dataString)
-        val dailyForecast = weatherForecast.timelines.daily
+//        var weatherForecast = WeatherForecast(Location(), WeatherForecastTimelines(minutely = listOf(), hourly = listOf(), daily = listOf()))
+//        CoroutineScope(Dispatchers.Default).launch {
+//            val weatherRequestClient = WeatherRequestClient()
+//            weatherForecast = weatherRequestClient.requestWeatherForecast(
+//                latitude = lat.value,
+//                longitude = lon.value
+//            )
+//        }
+        dailyForecast.value = weatherForecast.timelines.daily
         minutelyForecast.value = weatherForecast.timelines.minutely
 
         setContent {
             val screen by screenFlow.collectAsState()
-            val cityName by city.collectAsState()
             val minutely by minutelyForecast.collectAsState()
             val latitudeValue by lat.collectAsState()
             val longitudeValue by lon.collectAsState()
@@ -134,7 +129,7 @@ class MainActivity : ComponentActivity(), DeviceLocationTracker.DeviceLocationLi
         }
     }
 
-    // 37.421998,-122.084000
+    // Budapest: 37.421998,-122.084000
     override fun onDeviceLocationChanged(results: List<Address>?) {
         val currentLocation = results?.get(0)
         currentLocation?.apply {
@@ -145,24 +140,7 @@ class MainActivity : ComponentActivity(), DeviceLocationTracker.DeviceLocationLi
             city.value = locality
             lat.value = latitude
             lon.value = longitude
-//            println("lat-lon $lat\n$lon")
 
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    WeatherAppTheme {
-        Greeting("Android")
     }
 }
